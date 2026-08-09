@@ -2,7 +2,7 @@
 
 > **Purpose:** Audited reference stored with the portfolio for the startup website, product pages, proposals, onboarding, PRDs, and public-facing copy.
 >
-> **Audit basis:** repository files, source code, tests, package metadata, deployment configuration, and git metadata available in this monorepo, audited **2026-08-09**. The document describes the repository snapshot at that date; it is not a permanent guarantee that deployments, data, or code remain unchanged.
+> **Audit basis:** repository files, source code, tests, package metadata, deployment configuration, and git metadata available in the portfolio repositories in this workspace (this marketing-site repository plus its sibling product repositories), audited **2026-08-09**. The document describes the repository snapshot at that date; it is not a permanent guarantee that deployments, data, or code remain unchanged.
 >
 > **Important:** This is business and content documentation, not an agent-instruction file. It must not be used to infer claims that are not stated here. `VERIFIED` means supported by repository evidence, not independently verified in production and not automatically approved as website copy. `DRAFT` means proposed positioning or copy that still needs the owner's approval. `CONFIRM` means a company decision or fact that cannot be established from the repositories. `DO NOT PUBLISH` means sensitive, unsupported, or unsafe content.
 
@@ -38,6 +38,7 @@
 
 | Domain | Product line | Repository status at audit | Public-facing status safe to use |
 |---|---|---|---|
+| Marketing site | **insposoft-site** (`insposoft-site`) | Standalone Astro 5 static site on `main`; bilingual EN/TR one-pager with privacy, terms, and 404 pages in both locales; Formspree-ready contact form (renders an "unavailable" notice until an endpoint is configured); all technical visuals labeled synthetic | **Site structure and copy implemented in the repository; live reachability of `https://insposoft.com` not independently verified in this audit.** |
 | Energy markets and storage | **bobo** (`bobo-api` + `bobo-ui`) | Active repositories on `main`; repository/portfolio metadata identifies UI/API hosts; UI has Cloudflare deployment configuration | **Reported live deployment configuration with a credential-gated access path.** Current reachability, public self-service registration, customer tenancy, pricing, and SLA are not independently established here. |
 | Hydrology | **Ağkolu, Kemerçayır, Almus** (`agkolu`, `iffc`, `almus-iifc`) | Three working Streamlit applications on `main`; different levels of testing and packaging | **Working site-specific forecasting applications; no public URL verified for the family in this audit.** |
 | Flood engineering | **Taşkın Hesap — Sentetik Yöntemler** (`flood-compute`) | Active repository on `main`; FastAPI + vanilla JS application, Docker path, golden and smoke tests | **Working, deployable engineering application; no public hosted URL verified.** |
@@ -636,6 +637,8 @@ Use this table to route an inquiry. It is a product-fit aid, not a sales promise
 
 ## 8. Website content plan
 
+> **Implementation status (VERIFIED, 2026-08-09):** the marketing site (`insposoft-site`, Astro 5 static) implements this plan as a single one-page layout. The home page combines company positioning, the three capability areas (bobo; Ağkolu·Kemerçayır·Almus; Taşkın Hesap) as “Engineering Systems” cards with decision/review lines, an evidence & approach section with a verification ledger, a three-step “How we work” section, technical demonstrations, the research lineage, and a contact section using the Formspree form. Privacy, terms, and 404 pages exist in both locales. The plan’s separate product pages (BESS studio, Inflow, Taşkın Hesap, Methods & evidence) remain **DRAFT**; the one-pager presents their content as sections, and the product-level CTAs from §8.2 are not implemented.
+
 ### 8.1 Recommended site structure — DRAFT
 
 1. **Home:** concise company positioning, three current product lines, evidence/verification section, and a restrained contact CTA.
@@ -738,6 +741,7 @@ Do not claim SEO rankings, traffic, market demand, or search volume without sepa
 
 This section is editorial metadata for maintaining the content reference. Do not copy repository paths, internal filenames, local ports, or development commands into public pages. The authoritative technical source for each claim is the relevant project’s current `AGENTS.md`, README, source, tests, and deployment configuration—not this document alone. At the audit date, the key sources are:
 
+- **Marketing site:** `insposoft-site/AGENTS.md`, `insposoft-site/README.md`, `astro.config.mjs`, `package.json`, `src/layouts/BaseLayout.astro`, `src/components/` (`OnePage.astro`, `ContactForm.astro`, `TechnicalHero.astro`), `src/pages/` and `src/pages/tr/` (`index`, `privacy`, `terms`, `404`), `src/styles/global.css`, `public/` (`og.svg`, `og.png`, `sitemap.xml`, `robots.txt`), `.env.example`.
 - **Portfolio:** root `AGENTS.md`.
 - **bobo API:** `bobo-api/AGENTS.md`, `bobo-api/README.md`, `bobo-api/pyproject.toml`, `bobo-api/app/`, `bobo-api/tests/`.
 - **bobo UI:** `bobo-ui/AGENTS.md`, `bobo-ui/README.md`, `bobo-ui/package.json`, `bobo-ui/wrangler.jsonc`, `bobo-ui/src/`, `bobo-ui/worker/`.
@@ -1103,6 +1107,8 @@ These records are a planning register, not complete export objects. The full met
 All copy in this subsection remains **DRAFT** until company identity, language, service model, access route, team proof, and legal details are confirmed. These metadata records are part of the editorial source and must not be emitted as visible website text.
 
 ### 13.17 Repository-to-website integration matrix
+
+> **Implementation note (VERIFIED, 2026-08-09):** the current marketing site implements these website destinations as sections of a single one-page layout (see the §8 implementation status), not as separate pages.
 
 | Repository evidence | Website destination | Public treatment |
 |---|---|---|
