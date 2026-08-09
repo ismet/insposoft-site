@@ -11,6 +11,29 @@ interface Props {
 const { title, description, lang, alternatePath } = Astro.props;
 const canonical = new URL(Astro.url.pathname, 'https://insposoft.com');
 const alternateLocale = lang === 'en' ? 'tr' : 'en';
+const ogLocale = lang === 'tr' ? 'tr_TR' : 'en_US';
+const ogLocaleAlternate = lang === 'tr' ? 'en_US' : 'tr_TR';
+const skipText = lang === 'tr' ? 'İçeriğe geç' : 'Skip to content';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://insposoft.com/#organization',
+      name: 'INSPOSOFT',
+      url: 'https://insposoft.com',
+      logo: { '@type': 'ImageObject', url: 'https://insposoft.com/og.png' },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://insposoft.com/#website',
+      url: 'https://insposoft.com',
+      name: 'INSPOSOFT',
+      inLanguage: lang === 'tr' ? 'tr' : 'en',
+      publisher: { '@id': 'https://insposoft.com/#organization' },
+    },
+  ],
+};
 ---
 <!doctype html>
 <html lang={lang}>
@@ -19,13 +42,22 @@ const alternateLocale = lang === 'en' ? 'tr' : 'en';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f5f3ed" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang={lang} href={canonical} />
     {alternatePath && <link rel="alternate" hreflang={alternateLocale} href={`https://insposoft.com${alternatePath}`} />}
     {alternatePath && <link rel="alternate" hreflang="x-default" href="https://insposoft.com/" />}
-    <meta property="og:image" content="https://insposoft.com/og.svg" />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlternate} />
+    <meta property="og:image" content="https://insposoft.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://insposoft.com/og.svg" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://insposoft.com/og.png" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -38,6 +70,7 @@ const alternateLocale = lang === 'en' ? 'tr' : 'en';
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <a class="skip-link" href="#main">{skipText}</a>
     <slot />
   </body>
 </html>
