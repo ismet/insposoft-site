@@ -1,54 +1,242 @@
-<div class="hero-art" aria-label="Abstract technical diagram connecting energy, water, and engineering data" role="img">
+---
+interface Props {
+  lang: 'en' | 'tr';
+}
+
+const { lang } = Astro.props;
+const tr = lang === 'tr';
+const figLabel = tr
+  ? 'ŞEK. 01 — SENTETİK İŞLETME SENARYOSU · MODELLENMİŞ'
+  : 'FIG. 01 — SYNTHETIC DISPATCH SCENARIO · MODELLED';
+const labels = tr
+  ? {
+      observation: 'GÖZLEM · Q', method: 'YÖNTEM · DİNAMİK PROGRAMLAMA', horizon: 'UFUK · 24 SAAT', socBins: 'SOC ARALIĞI · %20–90', qLags: 'Q GECİKMELERİ · {1,2,3,7}', storage: 'DEPOLAMA · İNCELEME', bounds: 'SINIRLAR · SENTETİK', scenario: 'SENARYO / MW · 24 SAAT', price: 'FİYAT', data: 'VERİ', optimize: 'OPTİMİZE ET', review: 'İNCELEME', decision: 'KARAR', inputSeries: 'GİRDİ SERİSİ', dispatch: 'İŞLETME PLANI', peak: 'TEPE 18.4 MW', scale: 'ÖLÇEK / SENTETİK', methodSpine: 'YÖNTEM', boundsSpine: 'SINIRLAR · η',
+    }
+  : {
+      observation: 'OBSERVATION · Q', method: 'METHOD · DYNAMIC PROGRAMMING', horizon: 'HORIZON · 24 H', socBins: 'SOC BINS · 20–90 %', qLags: 'Q LAGS · {1,2,3,7}', storage: 'STORAGE · REVIEW', bounds: 'BOUNDS · SYNTHETIC', scenario: 'SCENARIO / MW · 24 H', price: 'PRICE', data: 'DATA', optimize: 'OPTIMIZE', review: 'REVIEW', decision: 'DECISION', inputSeries: 'INPUT SERIES', dispatch: 'DISPATCH PLAN', peak: 'PEAK 18.4 MW', scale: 'SCALE / SYNTHETIC', methodSpine: 'METHOD', boundsSpine: 'BOUNDS · η',
+    };
+---
+<div class="hero-art" aria-label={tr ? 'Enerji, su ve mühendislik verisini birleştiren teknik diyagram' : 'Abstract technical diagram connecting energy, water, and engineering data'} role="img">
   <svg viewBox="0 0 680 620" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="wash" x1="70" y1="40" x2="580" y2="550" gradientUnits="userSpaceOnUse">
         <stop stop-color="#dcebe1" />
         <stop offset="1" stop-color="#f5f3ed" stop-opacity="0" />
       </linearGradient>
-      <linearGradient id="line" x1="96" y1="490" x2="568" y2="80" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#123e36" stop-opacity=".22" />
-        <stop offset=".5" stop-color="#2c8278" />
+      <linearGradient id="rustArea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#c86c47" stop-opacity=".26" />
+        <stop offset="1" stop-color="#c86c47" stop-opacity=".03" />
+      </linearGradient>
+      <linearGradient id="blueArea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#315b70" stop-opacity=".22" />
+        <stop offset="1" stop-color="#315b70" stop-opacity=".02" />
+      </linearGradient>
+      <linearGradient id="socGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2c8278" />
         <stop offset="1" stop-color="#c86c47" />
       </linearGradient>
-      <filter id="soft"><feGaussianBlur stdDeviation="18" /></filter>
+      <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="24" />
+      </filter>
     </defs>
-    <circle cx="405" cy="265" r="188" fill="url(#wash)" filter="url(#soft)" />
-    <g class="contours" stroke="#8caea1" stroke-opacity=".5">
-      <path d="M35 405C90 353 118 348 170 367c46 17 58 61 123 68 70 8 103-43 159-70 45-22 86-12 143 18" />
-      <path d="M29 433c61-57 104-57 151-35 45 21 65 64 124 68 76 5 102-44 158-72 46-23 91-14 161 24" />
-      <path d="M23 463c56-58 104-68 154-45 49 22 67 62 128 66 73 5 103-43 160-74 50-27 105-15 175 31" />
-      <path d="M24 493c51-61 107-76 159-53 50 22 68 60 130 63 73 4 107-44 163-76 56-31 111-12 180 35" />
-      <path d="M60 520c50-54 96-67 143-48 52 21 76 59 135 62 75 4 105-41 161-72 55-30 104-14 145 13" />
+
+    <!-- soft wash behind the scenario panel -->
+    <circle cx="505" cy="255" r="185" fill="url(#wash)" filter="url(#soft)" opacity=".7" />
+
+    <!-- faint background contours -->
+    <g class="contours" stroke="#8caea1" stroke-opacity=".28" stroke-width="1.5">
+      <path d="M20 340c96-40 190-12 282-24 88-11 160 22 342 2" />
+      <path d="M20 382c104-34 196-8 292-20 92-12 158 18 330 0" />
+      <path d="M20 424c112-30 202-4 300-16 88-10 154 14 322-2" />
     </g>
-    <g class="datum" fill="#315b70">
-      <circle cx="128" cy="150" r="4" />
-      <circle cx="491" cy="113" r="4" />
-      <circle cx="550" cy="376" r="4" />
+
+    <!-- ================= OBSERVATION PANEL ================= -->
+    <g>
+      <rect x="36" y="64" width="292" height="146" fill="#fffefa" stroke="#123e36" stroke-opacity=".5" />
+      <text x="52" y="84" fill="#315b70" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.3">{labels.observation}</text>
+
+      <!-- inflow grid: values 10 / 20 / 30 at y = 186 - v*2.05 -->
+      <g stroke="#d3d7ce" stroke-opacity=".7">
+        <path d="M52 165.5h260M52 145h260M52 124.5h260" />
+      </g>
+      <g stroke="#315b70" stroke-opacity=".4">
+        <path d="M52 186h260" />
+      </g>
+      <g fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="7" letter-spacing=".3" text-anchor="end">
+        <text x="46" y="128.5">30</text>
+        <text x="46" y="149">20</text>
+        <text x="46" y="169.5">10</text>
+        <text x="46" y="190">0</text>
+      </g>
+      <g fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="7" letter-spacing=".3" text-anchor="middle">
+        <text x="52" y="200">D1</text>
+        <text x="104" y="200">D4</text>
+        <text x="173.3" y="200">D8</text>
+        <text x="242.7" y="200">D12</text>
+        <text x="312" y="200">D16</text>
+      </g>
+
+      <!-- inflow area + line (16-day series) -->
+      <path d="M 52 149.1 C 52 149.1 63.55 146.71 69.33 145 C 75.11 143.29 80.89 141.24 86.67 138.85 C 92.45 136.46 98.22 133.04 104 130.65 C 109.78 133.04 115.55 124.84 121.33 124.5 C 127.11 124.16 132.89 127.23 138.67 128.6 C 144.45 129.97 150.22 133.04 156 132.7 C 161.78 132.36 167.55 128.26 173.33 126.55 C 179.11 128.26 184.89 121.77 190.67 122.45 C 196.45 123.13 202.22 127.92 208 130.65 C 213.78 133.38 219.55 136.8 225.33 138.85 C 231.11 140.9 236.89 143.29 242.67 142.95 C 248.45 142.61 254.22 139.19 260 136.8 C 265.78 139.19 271.55 129.28 277.33 128.6 C 283.11 129.28 288.89 130.65 294.67 132.7 C 300.45 134.75 306.22 138.95 312 140.9 L 312 186 L 52 186 Z" fill="url(#blueArea)" />
+      <path d="M 52 149.1 C 52 149.1 63.55 146.71 69.33 145 C 75.11 143.29 80.89 141.24 86.67 138.85 C 92.45 136.46 98.22 133.04 104 130.65 C 109.78 133.04 115.55 124.84 121.33 124.5 C 127.11 124.16 132.89 127.23 138.67 128.6 C 144.45 129.97 150.22 133.04 156 132.7 C 161.78 132.36 167.55 128.26 173.33 126.55 C 179.11 128.26 184.89 121.77 190.67 122.45 C 196.45 123.13 202.22 127.92 208 130.65 C 213.78 133.38 219.55 136.8 225.33 138.85 C 231.11 140.9 236.89 143.29 242.67 142.95 C 248.45 142.61 254.22 139.19 260 136.8 C 265.78 139.19 271.55 129.28 277.33 128.6 C 283.11 129.28 288.89 130.65 294.67 132.7 C 300.45 134.75 306.22 138.95 312 140.9" stroke="#315b70" stroke-width="2.2" stroke-linecap="round" />
+
+      <!-- D16 callout -->
+      <circle cx="312" cy="140.9" r="3" fill="#315b70" />
+      <path d="M310 138 L 298 122" stroke="#315b70" stroke-opacity=".5" stroke-dasharray="3 3" />
+      <text x="296" y="118" fill="#315b70" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing=".4" text-anchor="end">D₁₆ · Q₀</text>
     </g>
-    <g class="datum-label" fill="#315b70" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.1">
-      <text x="93" y="137">Q₀ / INPUT</text>
-      <text x="495" y="101">METHOD / 02</text>
-      <text x="558" y="374">REVIEW POINT</text>
+
+    <!-- ================= METHOD PANEL ================= -->
+    <g>
+      <rect x="36" y="232" width="292" height="86" fill="#fffefa" stroke="#123e36" stroke-opacity=".5" />
+      <text x="52" y="252" fill="#2c8278" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.3">{labels.method}</text>
+
+      <!-- spec rows -->
+      <g fill="#2c8278">
+        <rect x="52" y="266" width="9" height="9" opacity=".9" />
+        <rect x="52" y="283" width="9" height="9" opacity=".6" />
+        <rect x="52" y="300" width="9" height="9" opacity=".35" />
+      </g>
+      <g fill="#53615c" font-family="JetBrains Mono, monospace" font-size="8.5" letter-spacing=".6">
+        <text x="70" y="274">{labels.horizon}</text>
+        <text x="70" y="291">{labels.socBins}</text>
+        <text x="70" y="308">{labels.qLags}</text>
+      </g>
+
+      <!-- state lattice -->
+      <g stroke="#315b70" stroke-opacity=".4">
+        <rect x="268" y="266" width="20" height="20" />
+        <rect x="294" y="266" width="20" height="20" />
+        <rect x="268" y="292" width="20" height="20" />
+      </g>
+      <rect x="294" y="292" width="20" height="20" fill="#2c8278" fill-opacity=".3" stroke="#2c8278" stroke-opacity=".7" />
     </g>
-    <path class="signal" d="M76 374c35-13 47-60 76-52 30 8 30 93 64 86 35-7 31-130 67-121 35 9 18 164 55 154 37-10 36-194 71-176 36 18 22 176 61 168 40-8 39-104 80-93 28 7 39 33 79 23" stroke="url(#line)" stroke-width="3" stroke-linecap="round" />
-    <path d="M93 94h164v116H93z" stroke="#123e36" stroke-opacity=".65" />
-    <path d="M108 112h54v80h-54zm68 0h66v80h-66z" fill="#123e36" fill-opacity=".06" stroke="#123e36" stroke-opacity=".4" />
-    <path d="M118 172h34m34-43h44m-44 23h32m-32 20h44" stroke="#123e36" stroke-opacity=".7" stroke-linecap="round" />
-    <text x="108" y="103" fill="#123e36" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.3">OBSERVATION</text>
-    <path d="M435 76h126v164H435z" stroke="#c86c47" stroke-opacity=".75" />
-    <path d="M456 205V112m0 93h87" stroke="#c86c47" stroke-opacity=".55" />
-    <path d="M456 180c17-25 20 9 35-31 14-40 24 8 39-29 10-25 17 4 27-20" stroke="#c86c47" stroke-width="2.5" stroke-linecap="round" />
-    <text x="448" y="99" fill="#a95a3c" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.3">SCENARIO / MW</text>
-    <path d="M346 337c0-33 27-60 60-60s60 27 60 60v59H346v-59Z" fill="#f5f3ed" stroke="#123e36" stroke-width="2" />
-    <path d="M331 396h150v24H331z" fill="#123e36" />
-    <path d="M367 420v28m78-28v28" stroke="#123e36" stroke-width="4" />
-    <path d="M372 346h68m-68 20h68m-68 20h68" stroke="#2c8278" stroke-width="3" stroke-linecap="round" />
-    <text x="349" y="266" fill="#123e36" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.3">STORAGE / REVIEW</text>
-    <path d="M262 150h85m0 0-10-6m10 6-10 6M496 240v38m0 0-6-10m6 10 6-10M346 370h-62m0 0 10-6m-10 6 10 6" stroke="#315b70" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    <g fill="#123e36" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.1">
-      <text x="57" y="575">DATA</text><text x="172" y="575">METHOD</text><text x="301" y="575">REVIEW</text><text x="430" y="575">DECISION</text>
+
+    <!-- ================= STORAGE / REVIEW PANEL ================= -->
+    <g>
+      <rect x="36" y="338" width="292" height="86" fill="#fffefa" stroke="#123e36" stroke-opacity=".5" />
+      <text x="52" y="358" fill="#123e36" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.3">{labels.storage}</text>
+
+      <!-- battery -->
+      <rect x="64" y="370" width="80" height="26" rx="4" fill="#fffefa" stroke="#123e36" stroke-opacity=".6" />
+      <rect x="148" y="378" width="8" height="10" rx="2" fill="#123e36" fill-opacity=".6" />
+      <rect x="66" y="372" width="44" height="22" rx="2" fill="url(#socGrad)" />
+      <g stroke="#f5f3ed" stroke-opacity=".7">
+        <path d="M88 374v18M112 374v18" />
+      </g>
+      <rect x="176" y="389" width="6" height="6" fill="#2c8278" />
+      <text x="188" y="396" fill="#53615c" font-family="JetBrains Mono, monospace" font-size="8.5" letter-spacing=".5">η 92 %</text>
+      <text x="188" y="380" fill="#53615c" font-family="JetBrains Mono, monospace" font-size="8.5" letter-spacing=".5">SOC 20–90 %</text>
+      <text x="312" y="396" fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing=".4" text-anchor="end">{labels.bounds}</text>
     </g>
-    <path d="M81 551h394" stroke="#123e36" stroke-opacity=".25" />
-    <circle cx="81" cy="551" r="3" fill="#c86c47" /><circle cx="200" cy="551" r="3" fill="#2c8278" /><circle cx="328" cy="551" r="3" fill="#315b70" /><circle cx="475" cy="551" r="3" fill="#123e36" />
+
+    <!-- pipeline connectors -->
+    <g stroke="#2c8278" stroke-opacity=".8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M182 212v14M178 222l4 6 4-6" />
+      <path d="M182 320v14M178 330l4 6 4-6" />
+    </g>
+
+    <!-- ================= SCENARIO PANEL ================= -->
+    <g>
+      <rect x="348" y="64" width="298" height="360" fill="#fffefa" stroke="#c86c47" stroke-opacity=".85" />
+      <text x="364" y="86" fill="#a85436" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.3">{labels.scenario}</text>
+
+      <!-- legend: dot left of label, consistent order -->
+      <g font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing=".4">
+        <circle cx="530" cy="82" r="3" fill="#c86c47" />
+        <text x="538" y="85" fill="#53615c">MW</text>
+        <circle cx="576" cy="82" r="3" fill="#315b70" />
+        <text x="584" y="85" fill="#53615c">{labels.price}</text>
+        <circle cx="614" cy="82" r="3" fill="#2c8278" />
+        <text x="622" y="85" fill="#53615c">SOC</text>
+      </g>
+
+      <!-- chart grid -->
+      <g stroke="#d3d7ce" stroke-opacity=".8">
+        <path d="M364 272.5h266M364 215h266M364 157.5h266M364 100h266" />
+      </g>
+      <g stroke="#123e36" stroke-opacity=".45">
+        <path d="M364 330h266" />
+      </g>
+      <g stroke="#d3d7ce" stroke-opacity=".5">
+        <path d="M430.5 100v230M497 100v230M563.5 100v230" />
+      </g>
+      <g fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing=".3" text-anchor="end">
+        <text x="358" y="103">20</text>
+        <text x="358" y="160.5">15</text>
+        <text x="358" y="218">10</text>
+        <text x="358" y="275.5">5</text>
+        <text x="358" y="334">0</text>
+      </g>
+      <g fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing=".3" text-anchor="middle">
+        <text x="364" y="348">0</text>
+        <text x="430.5" y="348">6</text>
+        <text x="497" y="348">12</text>
+        <text x="563.5" y="348">18</text>
+        <text x="630" y="348">24 h</text>
+      </g>
+      <text x="358" y="96" fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="7.5" letter-spacing=".3" text-anchor="end">MW</text>
+
+      <!-- SOC ribbon -->
+      <g fill="#2c8278" fill-opacity=".16">
+        <rect x="364" y="305.5" width="22.2" height="24.5" />
+        <rect x="386.2" y="305.5" width="22.1" height="24.5" />
+        <rect x="408.3" y="305.5" width="22.2" height="24.5" />
+        <rect x="430.5" y="302" width="22.2" height="28" />
+        <rect x="452.7" y="291.5" width="22.1" height="38.5" />
+        <rect x="474.8" y="277.5" width="22.2" height="52.5" />
+        <rect x="497" y="270.5" width="22.2" height="59.5" />
+        <rect x="519.2" y="274" width="22.1" height="56" />
+        <rect x="541.3" y="284.5" width="22.2" height="45.5" />
+        <rect x="563.5" y="298.5" width="22.2" height="31.5" />
+        <rect x="585.7" y="305.5" width="22.1" height="24.5" />
+        <rect x="607.8" y="309" width="22.2" height="21" />
+      </g>
+      <path d="M364 305.5H386.2V305.5H408.3V305.5H430.5V302H452.7V291.5H474.8V277.5H497V270.5H519.2V274H541.3V284.5H563.5V298.5H585.7V305.5H607.8V309H630" stroke="#2c8278" stroke-width="1.5" />
+
+      <!-- price line -->
+      <path d="M 364 285 C 364 285 378.82 290.83 386.2 293.75 C 393.58 296.67 400.92 301.78 408.3 302.5 C 415.68 303.23 423.1 303.93 430.5 298.1 C 437.9 292.27 445.32 284.27 452.7 267.5 C 460.08 250.73 467.42 220.83 474.8 197.5 C 482.18 174.17 489.6 133.33 497 127.5 C 504.4 133.33 511.82 149.37 519.2 162.5 C 526.58 175.63 533.92 203.33 541.3 206.25 C 548.68 209.17 556.1 190.21 563.5 180 C 570.9 169.79 578.32 142.08 585.7 145 C 593.08 147.92 600.42 181.87 607.8 197.5 C 615.18 213.13 622.6 226.4 630 238.75" stroke="#315b70" stroke-width="1.8" stroke-opacity=".75" />
+
+      <!-- dispatch area + line -->
+      <path d="M 364 330 C 364 330 378.82 329.62 386.2 325.4 C 393.58 320.78 400.92 315.05 408.3 304.7 C 415.68 294.35 423.1 277.1 430.5 263.3 C 437.9 249.5 445.32 234.93 452.7 221.9 C 460.08 208.87 467.42 195.45 474.8 185.1 C 482.18 174.75 489.6 166.7 497 159.8 C 504.4 152.9 511.82 150.6 519.2 143.7 C 526.58 137.5 533.92 117.82 541.3 118.4 C 548.68 119.32 556.1 133.4 563.5 147.2 C 570.9 161 578.32 181.47 585.7 201.2 C 593.08 220.93 600.42 245.67 607.8 265.6 C 615.18 285.53 622.6 304.4 630 320.8 L 630 330 L 364 330 Z" fill="url(#rustArea)" />
+      <path d="M 364 330 C 364 330 378.82 329.62 386.2 325.4 C 393.58 320.78 400.92 315.05 408.3 304.7 C 415.68 294.35 423.1 277.1 430.5 263.3 C 437.9 249.5 445.32 234.93 452.7 221.9 C 460.08 208.87 467.42 195.45 474.8 185.1 C 482.18 174.75 489.6 166.7 497 159.8 C 504.4 152.9 511.82 150.6 519.2 143.7 C 526.58 137.5 533.92 117.82 541.3 118.4 C 548.68 119.32 556.1 133.4 563.5 147.2 C 570.9 161 578.32 181.47 585.7 201.2 C 593.08 220.93 600.42 245.67 607.8 265.6 C 615.18 285.53 622.6 304.4 630 320.8" stroke="#c86c47" stroke-width="2.6" stroke-linecap="round" />
+
+      <!-- peak callout -->
+      <circle cx="541.3" cy="118.4" r="4" fill="#a85436" />
+      <circle cx="541.3" cy="118.4" r="7" stroke="#a85436" stroke-opacity=".3" />
+      <path d="M546 115 L 614 96" stroke="#a85436" stroke-opacity=".55" stroke-dasharray="3 3" />
+      <text x="630" y="92" fill="#a85436" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing=".4" text-anchor="end">{labels.peak}</text>
+    </g>
+
+    <!-- ================= SPINE ================= -->
+    <g>
+      <path d="M36 470h610" stroke="#123e36" stroke-opacity=".25" stroke-width="2" />
+      <path d="M36 470h610" class="signal" stroke="#2c8278" stroke-opacity=".5" stroke-width="2" />
+      <g stroke="#123e36" stroke-opacity=".3">
+        <path d="M117.25 470v-6M264.75 470v-6M417.25 470v-6M569.75 470v-6" />
+      </g>
+      <g stroke="#f5f3ed" stroke-width="2.5">
+        <circle cx="112.25" cy="470" r="5" fill="#c86c47" />
+        <circle cx="264.75" cy="470" r="5" fill="#2c8278" />
+        <circle cx="417.25" cy="470" r="5" fill="#315b70" />
+        <circle cx="569.75" cy="470" r="5" fill="#123e36" />
+      </g>
+      <g fill="#123e36" font-family="JetBrains Mono, monospace" font-size="9.5" letter-spacing="2.5" text-anchor="middle">
+        <text x="112.25" y="448">{labels.data}</text>
+        <text x="264.75" y="448">{labels.methodSpine}</text>
+        <text x="417.25" y="448">{labels.review}</text>
+        <text x="569.75" y="448">{labels.decision}</text>
+      </g>
+      <g fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="6.5" letter-spacing=".6" text-anchor="middle">
+        <text x="112.25" y="492">{labels.inputSeries}</text>
+        <text x="264.75" y="492">{labels.optimize}</text>
+        <text x="417.25" y="492">{labels.boundsSpine}</text>
+        <text x="569.75" y="492">{labels.dispatch}</text>
+      </g>
+    </g>
+
+    <!-- captions -->
+    <text x="36" y="545" fill="#315b70" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing=".8">{figLabel}</text>
+    <text x="646" y="545" fill="#5f6f68" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing=".8" text-anchor="end">{labels.scale}</text>
   </svg>
 </div>
