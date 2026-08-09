@@ -4,8 +4,29 @@ interface Props {
 }
 const { lang } = Astro.props;
 const tr = lang === 'tr';
+const endpoint = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT ?? '';
+const messages = {
+  invalid: tr ? 'Lütfen zorunlu alanları kontrol edin.' : 'Please check the required fields.',
+  sending: tr ? 'Gönderiliyor…' : 'Sending…',
+  success: tr
+    ? 'Teşekkürler — talebiniz alındı. Verdiğiniz adrese yanıt vereceğiz.'
+    : 'Thank you — your inquiry was sent. We will reply to the address you provided.',
+  error: tr
+    ? 'Talep gönderilemedi. Lütfen tekrar deneyin veya doğrudan e-posta gönderin.'
+    : 'The inquiry could not be sent. Please try again or email us directly.',
+  spam: tr ? 'Talep alınamadı.' : 'The inquiry could not be accepted.',
+  unavailable: tr ? 'İletişim kanalı henüz yapılandırılmadı. Lütfen daha sonra tekrar deneyin.' : 'The inquiry route is not configured yet. Please check back soon.',
+  fields: {
+    name: tr ? 'Adınızı girin.' : 'Enter your name.',
+    organization: tr ? 'Kurumunuzu girin.' : 'Enter your organization.',
+    email: tr ? 'Geçerli bir iş e-postası girin.' : 'Enter a valid business email.',
+    message: tr ? 'Projenizi kısaca anlatın.' : 'Briefly describe your project.',
+    consent: tr ? 'Devam etmek için onay verin.' : 'Please give your consent to continue.',
+  },
+};
 ---
-<form class="contact-form" data-contact-form novalidate>
+{endpoint ? (
+<form class="contact-form" data-contact-form action={endpoint} method="POST" novalidate>
   <div class="form-route" role="group" aria-labelledby="route-label">
     <span id="route-label" class="eyebrow">{tr ? 'NE HAKKINDA KONUŞALIM?' : 'WHAT WOULD YOU LIKE TO DISCUSS?'}</span>
     <div class="route-options">
@@ -19,56 +40,119 @@ const tr = lang === 'tr';
   <div class="form-grid">
     <label>
       <span>{tr ? 'Adınız' : 'Your name'}</span>
-      <input name="name" type="text" autocomplete="name" required />
+      <input id="contact-name" name="name" type="text" autocomplete="name" required aria-describedby="contact-name-error" />
+      <span class="field-error" id="contact-name-error" role="alert" hidden>{messages.fields.name}</span>
     </label>
     <label>
       <span>{tr ? 'Kurum' : 'Organization'}</span>
-      <input name="organization" type="text" autocomplete="organization" required />
+      <input id="contact-organization" name="organization" type="text" autocomplete="organization" required aria-describedby="contact-organization-error" />
+      <span class="field-error" id="contact-organization-error" role="alert" hidden>{messages.fields.organization}</span>
     </label>
     <label>
       <span>{tr ? 'İş e-postası' : 'Business email'}</span>
-      <input name="email" type="email" autocomplete="email" required />
+      <input id="contact-email" name="email" type="email" autocomplete="email" required aria-describedby="contact-email-error" />
+      <span class="field-error" id="contact-email-error" role="alert" hidden>{messages.fields.email}</span>
     </label>
     <label>
       <span>{tr ? 'Ülke / bölge' : 'Country / region'}</span>
-      <input name="region" type="text" autocomplete="country-name" />
+      <input id="contact-region" name="region" type="text" autocomplete="country-name" />
     </label>
     <label class="full-field">
       <span>{tr ? 'Kısaca projeniz' : 'Tell us briefly about the project'}</span>
-      <textarea name="message" rows="5" required></textarea>
+      <textarea id="contact-message" name="message" rows="5" maxlength="3000" required aria-describedby="contact-message-error"></textarea>
+      <span class="field-error" id="contact-message-error" role="alert" hidden>{messages.fields.message}</span>
     </label>
   </div>
   <label class="consent-field">
-    <input name="consent" type="checkbox" required />
+    <input id="contact-consent" name="consent" type="checkbox" required aria-describedby="contact-consent-error" />
     <span>{tr ? 'Bu talebin gizlilik bildirimine uygun şekilde işlenmesini kabul ediyorum.' : 'I agree that this inquiry may be processed according to the privacy notice.'}</span>
+    <span class="field-error" id="contact-consent-error" role="alert" hidden>{messages.fields.consent}</span>
   </label>
-  <input class="honeypot" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <input class="honeypot" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" />
   <div class="form-actions">
     <button class="button button-dark" type="submit">{tr ? 'Talep gönder' : 'Send inquiry'} <span aria-hidden="true">↗</span></button>
     <p class="form-status" data-form-status role="status" aria-live="polite"></p>
   </div>
   <p class="form-note">{tr ? 'Gizli dosyaları, parolaları veya API anahtarlarını bu form üzerinden göndermeyin.' : 'Please do not send confidential files, passwords, or API keys through this form.'}</p>
 </form>
-<script is:inline define:vars={{ invalidMessage: tr ? 'Lütfen zorunlu alanları kontrol edin.' : 'Please check the required fields.', pendingMessage: tr ? 'İletişim altyapısı henüz yapılandırılmadı. Lütfen daha sonra tekrar deneyin.' : 'Contact delivery is not configured yet. Please try again after the business inbox is connected.', spamMessage: tr ? 'Talep alınamadı.' : 'The inquiry could not be accepted.' }}>
+) : (
+  <div class="contact-unavailable" role="status">
+    <p class="eyebrow">{tr ? 'İLETİŞİM KANALI' : 'CONTACT ROUTE'}</p>
+    <p>{messages.unavailable}</p>
+  </div>
+)}
+<script is:inline define:vars={{ endpoint, messages }}>
   const form = document.querySelector('[data-contact-form]');
   const status = document.querySelector('[data-form-status]');
+  const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
   if (form instanceof HTMLFormElement && status instanceof HTMLElement) {
-    form.addEventListener('submit', (event) => {
+    const fields = Array.from(form.querySelectorAll('input, textarea')).filter((field) => field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement).filter((field) => field.getAttribute('name') !== '_gotcha');
+    const setStatus = (message, kind) => {
+      status.textContent = message;
+      status.className = `form-status${kind ? ` ${kind}` : ''}`;
+    };
+    const updateFieldState = (field, announceError = false) => {
+      if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return;
+      const error = field.getAttribute('aria-describedby') ? document.getElementById(field.getAttribute('aria-describedby')) : null;
+      const invalid = !field.validity.valid;
+      if (invalid) {
+        field.setAttribute('aria-invalid', 'true');
+        if (error instanceof HTMLElement) error.hidden = false;
+        if (announceError) field.focus();
+      } else {
+        field.removeAttribute('aria-invalid');
+        if (error instanceof HTMLElement) error.hidden = true;
+      }
+    };
+    fields.forEach((field) => {
+      field.addEventListener('input', () => updateFieldState(field));
+      field.addEventListener('change', () => updateFieldState(field));
+    });
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const honeypot = form.elements.namedItem('website');
+      const honeypot = form.elements.namedItem('_gotcha');
       if (honeypot instanceof HTMLInputElement && honeypot.value.trim() !== '') {
-        status.textContent = spamMessage;
-        status.className = 'form-status error';
+        setStatus(messages.spam, 'error');
         return;
       }
       if (!form.checkValidity()) {
         form.classList.add('was-validated');
-        status.textContent = invalidMessage;
-        status.className = 'form-status error';
+        const firstInvalid = fields.find((field) => !field.validity.valid);
+        fields.forEach((field) => updateFieldState(field));
+        if (firstInvalid) updateFieldState(firstInvalid, true);
+        setStatus(messages.invalid, 'error');
         return;
       }
-      status.textContent = pendingMessage;
-      status.className = 'form-status pending';
+      if (!endpoint) {
+        setStatus(messages.error, 'error');
+        return;
+      }
+      if (submitBtn instanceof HTMLButtonElement) {
+        submitBtn.disabled = true;
+      }
+      setStatus(messages.sending, 'pending');
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        const data = await response.json().catch(() => null);
+        if (data && data.ok === true) {
+          form.reset();
+          form.classList.remove('was-validated');
+          fields.forEach((field) => updateFieldState(field));
+          setStatus(messages.success, 'success');
+        } else {
+          setStatus(messages.error, 'error');
+        }
+      } catch {
+        setStatus(messages.error, 'error');
+      } finally {
+        if (submitBtn instanceof HTMLButtonElement) {
+          submitBtn.disabled = false;
+        }
+      }
     });
   }
 </script>
