@@ -1,10 +1,12 @@
 ---
+import { PUBLIC_FORMSPREE_ENDPOINT } from 'astro:env/client';
+
 interface Props {
   lang: 'en' | 'tr';
 }
 const { lang } = Astro.props;
 const tr = lang === 'tr';
-const endpoint = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT ?? '';
+const endpoint = PUBLIC_FORMSPREE_ENDPOINT;
 const messages = {
   invalid: tr ? 'Lütfen zorunlu alanları kontrol edin.' : 'Please check the required fields.',
   sending: tr ? 'Gönderiliyor…' : 'Sending…',
