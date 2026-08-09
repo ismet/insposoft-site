@@ -12,8 +12,8 @@ const messages = {
     ? 'Teşekkürler — talebiniz alındı. Verdiğiniz adrese yanıt vereceğiz.'
     : 'Thank you — your inquiry was sent. We will reply to the address you provided.',
   error: tr
-    ? 'Talep gönderilemedi. Lütfen tekrar deneyin veya doğrudan e-posta gönderin.'
-    : 'The inquiry could not be sent. Please try again or email us directly.',
+    ? 'Talep gönderilemedi. Lütfen bir süre sonra tekrar deneyin.'
+    : 'The inquiry could not be sent. Please try again in a moment.',
   spam: tr ? 'Talep alınamadı.' : 'The inquiry could not be accepted.',
   unavailable: tr ? 'İletişim kanalı henüz yapılandırılmadı. Lütfen daha sonra tekrar deneyin.' : 'The inquiry route is not configured yet. Please check back soon.',
   fields: {
@@ -30,11 +30,26 @@ const messages = {
   <div class="form-route" role="group" aria-labelledby="route-label">
     <span id="route-label" class="eyebrow">{tr ? 'NE HAKKINDA KONUŞALIM?' : 'WHAT WOULD YOU LIKE TO DISCUSS?'}</span>
     <div class="route-options">
-      <label><input type="radio" name="route" value="energy" checked /> <span>{tr ? 'Enerji ve BESS' : 'Energy & BESS'}</span></label>
-      <label><input type="radio" name="route" value="hydrology" /> <span>{tr ? 'Hidroloji ve su' : 'Hydrology & water'}</span></label>
-      <label><input type="radio" name="route" value="flood" /> <span>{tr ? 'Taşkın mühendisliği' : 'Flood engineering'}</span></label>
-      <label><input type="radio" name="route" value="partner" /> <span>{tr ? 'Mühendislik ortaklığı' : 'Engineering partnership'}</span></label>
-      <label><input type="radio" name="route" value="research" /> <span>{tr ? 'Araştırma ve yöntemler' : 'Research & methods'}</span></label>
+      <label>
+        <input type="radio" name="route" value="energy" checked />
+        <span>{tr ? 'Enerji ve BESS' : 'Energy & BESS'}</span>
+      </label>
+      <label>
+        <input type="radio" name="route" value="hydrology" />
+        <span>{tr ? 'Hidroloji ve su' : 'Hydrology & water'}</span>
+      </label>
+      <label>
+        <input type="radio" name="route" value="flood" />
+        <span>{tr ? 'Taşkın mühendisliği' : 'Flood engineering'}</span>
+      </label>
+      <label>
+        <input type="radio" name="route" value="partner" />
+        <span>{tr ? 'Mühendislik ortaklığı' : 'Engineering partnership'}</span>
+      </label>
+      <label>
+        <input type="radio" name="route" value="research" />
+        <span>{tr ? 'Araştırma ve yöntemler' : 'Research & methods'}</span>
+      </label>
     </div>
   </div>
   <div class="form-grid">
@@ -131,11 +146,14 @@ const messages = {
         submitBtn.disabled = true;
       }
       setStatus(messages.sending, 'pending');
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 15000);
       try {
         const response = await fetch(endpoint, {
           method: 'POST',
           body: new FormData(form),
           headers: { Accept: 'application/json' },
+          signal: controller.signal,
         });
         const data = await response.json().catch(() => null);
         if (data && data.ok === true) {
@@ -149,6 +167,7 @@ const messages = {
       } catch {
         setStatus(messages.error, 'error');
       } finally {
+        clearTimeout(timer);
         if (submitBtn instanceof HTMLButtonElement) {
           submitBtn.disabled = false;
         }

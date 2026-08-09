@@ -1,19 +1,25 @@
 ---
 import '../styles/global.css';
+import { CONTACT } from '../lib/contact';
 
 interface Props {
   title: string;
   description: string;
   lang: 'en' | 'tr';
   alternatePath?: string;
+  /** Set on the 404 pages: skip canonical/alternates/og:url/JSON-LD and emit noindex. */
+  noindex?: boolean;
 }
 
-const { title, description, lang, alternatePath } = Astro.props;
+const { title, description, lang, alternatePath, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, 'https://insposoft.com');
 const alternateLocale = lang === 'en' ? 'tr' : 'en';
 const ogLocale = lang === 'tr' ? 'tr_TR' : 'en_US';
 const ogLocaleAlternate = lang === 'tr' ? 'en_US' : 'tr_TR';
 const skipText = lang === 'tr' ? 'İçeriğe geç' : 'Skip to content';
+const ogImageAlt = lang === 'tr'
+  ? 'INSPOSOFT — enerji depolama, hidroloji ve taşkın mühendisliği için mühendislik yazılımı'
+  : 'INSPOSOFT — engineering software for energy storage, hydrology, and flood engineering';
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -22,7 +28,13 @@ const jsonLd = {
       '@id': 'https://insposoft.com/#organization',
       name: 'INSPOSOFT',
       url: 'https://insposoft.com',
-      logo: { '@type': 'ImageObject', url: 'https://insposoft.com/og.png' },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: CONTACT.phoneNumber,
+        contactType: 'customer service',
+        areaServed: 'TR',
+        availableLanguage: ['en', 'tr'],
+      },
     },
     {
       '@type': 'WebSite',
@@ -42,26 +54,29 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f5f3ed" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang={lang} href={canonical} />
-    {alternatePath && <link rel="alternate" hreflang={alternateLocale} href={`https://insposoft.com${alternatePath}`} />}
-    {alternatePath && <link rel="alternate" hreflang="x-default" href="https://insposoft.com/" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {!noindex && <link rel="alternate" hreflang={lang} href={canonical} />}
+    {!noindex && alternatePath && <link rel="alternate" hreflang={alternateLocale} href={`https://insposoft.com${alternatePath}`} />}
+    {!noindex && alternatePath && <link rel="alternate" hreflang="x-default" href="https://insposoft.com/" />}
     <meta property="og:locale" content={ogLocale} />
     <meta property="og:locale:alternate" content={ogLocaleAlternate} />
     <meta property="og:image" content="https://insposoft.com/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://insposoft.com/og.png" />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    {!noindex && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:site_name" content="INSPOSOFT" />
     <title>{title}</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23123e36'/%3E%3Cpath d='M15 42V22h7v20h-7Zm14 0V22h7v20h-7Zm14 0V22h7v20h-7Z' fill='%23f5f3ed'/%3E%3C/svg%3E" />
