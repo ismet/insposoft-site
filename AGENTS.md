@@ -6,7 +6,7 @@ Guidance for AI agents working in this repository. Read `README.md` and `BUSINES
 
 `insposoft-site` is a standalone **Astro + TypeScript static marketing site** for `https://insposoft.com`. It is intentionally separate from the `bobo-ui` application and calls no product backend.
 
-- **Astro 5** (`output: 'static'`, `build.format: 'directory'`), TypeScript strict (`astro/tsconfigs/strict`).
+- **Astro 7** (`output: 'static'`, `build.format: 'directory'`), TypeScript strict (`astro/tsconfigs/strict`).
 - **No UI framework in use.** Only plain `.astro` components and vanilla inline scripts. `tsconfig.json` pre-configures React JSX, but do not introduce React or other framework islands unless explicitly requested.
 - **Bilingual one-pager:** English at `/`, Turkish at `/tr/`. Privacy and terms are conservative publication drafts in both locales and retain owner/legal-review fields where facts are not confirmed.
 - Content narrative: energy/BESS (bobo), hydrology (Ağkolu, Kemerçayır, Almus), flood engineering (Taşkın Hesap), and an archived research lineage. All technical visuals are **synthetic demonstrations** and must stay labeled as such.
@@ -19,6 +19,8 @@ npm run dev        # astro dev — local dev server
 npm run build      # astro build — production build to dist/
 npm run preview    # astro preview — serve the built site
 npm run check      # astro check — type-check .astro files
+npm run preview:cf # build, then serve dist/ locally on workerd (wrangler dev)
+npm run deploy     # build, then deploy to Cloudflare Workers (wrangler deploy)
 ```
 
 There is **no test or lint suite** configured. Validation = `npm run check` (and `npm run build` for production confidence). Keep `dist/`, `.astro/`, and `node_modules/` out of changes; they are listed in `.gitignore`.
@@ -27,6 +29,7 @@ There is **no test or lint suite** configured. Validation = `npm run check` (and
 
 ```
 astro.config.mjs        # site URL, static output, directory format
+wrangler.toml           # Cloudflare Workers config — assets-only Worker serving dist/ (see README)
 tsconfig.json           # extends astro/tsconfigs/strict
 src/
   layouts/BaseLayout.astro   # shared <head>: SEO/JSON-LD, canonical/hreflang, OG/Twitter image, fonts, skip link, js-class gate
@@ -53,6 +56,10 @@ public/
 README.md                    # scope, commands, publication gates
 BUSINESS.md                  # audited portfolio content reference (VERIFIED / DRAFT / CONFIRM) — covers this site and the sibling product repos
 ```
+
+## Deployment (Cloudflare Workers)
+
+The site deploys as an **assets-only Cloudflare Worker** serving `dist/` — see `wrangler.toml` (`[assets] directory = "./dist"`, `not_found_handling = "404-page"`, `html_handling = "auto-trailing-slash"`). No adapter is used: Astro static output needs none. No runtime and no secrets on the Worker; `PUBLIC_FORMSPREE_ENDPOINT` is inlined at **build time**, so it must be present in the build environment (`.env` locally, a build env var in CI or Workers Builds). The `insposoft.com` custom domain requires an **active** Cloudflare zone (nameservers delegated) in the same account. `compatibility_date` in `wrangler.toml` is pinned to the newest date the installed wrangler/workerd supports — bump it when upgrading wrangler. Workers Builds (dashboard: Worker → Settings → Builds) can auto-deploy from Git and does **not** read `[build]` from `wrangler.toml`.
 
 ## Conventions
 

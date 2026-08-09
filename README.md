@@ -23,6 +23,8 @@ npm run check
 npm run build
 npm run dev
 npm run preview
+npm run preview:cf  # build, then serve dist/ locally on workerd (Cloudflare)
+npm run deploy      # build, then deploy to Cloudflare Workers
 ```
 
 ## Contact delivery
@@ -42,6 +44,38 @@ Setup steps already done:
 Before publishing, confirm in the Formspree dashboard: the recipient address (ismet.togay@gmail.com), sender/from address, spam settings, and that the form ID matches the deployed endpoint.
 
 Do not request passwords, API keys, service-account JSON, or confidential project files through the public form.
+
+## Deployment — Cloudflare Workers
+
+The site deploys as an **assets-only Cloudflare Worker** serving the static `dist/` build: no runtime, no adapter (Astro 7 static output needs no adapter for Cloudflare). Configuration lives in `wrangler.toml`.
+
+### Prerequisites
+
+- Node.js ≥ 22.12 (Astro 7 requirement; also covers wrangler 4.x)
+- A Cloudflare account
+- For `insposoft.com`: the zone must be an **active** Cloudflare zone in the same account — Workers custom domains require the nameservers delegated to Cloudflare (CNAME-only setups are not supported). Order of operations: add the zone → migrate nameservers → attach the custom domain → `npm run deploy`. Until the zone is active, set `workers_dev = true` in `wrangler.toml` to test on `insposoft-site.workers.dev`. SSL/TLS is provisioned automatically.
+
+### Commands
+
+```bash
+npm run build       # astro build → dist/
+npm run preview:cf  # build, then serve dist/ locally on workerd (http://localhost:8787); requires .env for the form
+npm run deploy      # build, then npx wrangler deploy
+```
+
+Authenticate once with `npx wrangler login` (or set `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in CI). `wrangler.toml` maps: `[assets] directory = "./dist"`, `not_found_handling = "404-page"` (unknown routes serve `dist/404.html` with a real 404 status), `html_handling = "auto-trailing-slash"` (matches `build.format: 'directory'` and the sitemap URLs). To preview on `<name>.workers.dev` instead of the custom domain, set `workers_dev = true` and remove the `[[routes]]` block.
+
+**Build-time env:** `PUBLIC_FORMSPREE_ENDPOINT` is inlined into the static build, so it must be present in the build environment (`.env` locally, or a build environment variable in CI/Workers Builds). The Worker itself has no runtime secrets. `compatibility_date` in `wrangler.toml` is pinned to the newest date the installed wrangler/workerd supports — bump it whenever you upgrade wrangler.
+
+### Automatic deploys — Workers Builds (optional)
+
+Cloudflare's native Git integration auto-deploys on push to `main`. Setup in the dashboard: Workers & Pages → your Worker → **Settings → Builds** → connect the GitHub repo, then:
+
+1. Build command: `npm ci && npm run build`
+2. Deploy command: keep the default `npx wrangler deploy`
+3. Add `PUBLIC_FORMSPREE_ENDPOINT` under the build's environment variables
+
+Workers Builds does **not** read `[build]` from `wrangler.toml` — build settings are configured in the dashboard (deployments still use this repo's `wrangler.toml` for the Worker and asset config). Free plan: 3,000 build minutes/month, 1 concurrent build.
 
 ## Publication gates
 

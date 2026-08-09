@@ -1,0 +1,31 @@
+#:schema node_modules/wrangler/config-schema.json
+# INSPOSOFT marketing site — Cloudflare Workers deployment config.
+#
+# Assets-only Worker: no `main` script, so wrangler serves the static Astro
+# build from dist/ with no runtime (zero billable Worker invocations).
+# No adapter needed — Astro static output deploys as-is (see README.md).
+
+name = "insposoft-site"
+# Newest compatibility date supported by the pinned wrangler/workerd (see package.json).
+compatibility_date = "2026-08-08"
+
+# Production: insposoft.com as a Workers custom domain. This requires the
+# insposoft.com DNS zone to be hosted in the same Cloudflare account
+# (Workers custom domains do not support CNAME-only zones). SSL/TLS is
+# provisioned automatically. To preview on <name>.workers.dev instead,
+# set workers_dev = true and remove the [[routes]] block below.
+workers_dev = false
+
+[[routes]]
+pattern = "insposoft.com"
+custom_domain = true
+
+# Static assets from the Astro build.
+[assets]
+directory = "./dist"
+# Unknown paths serve the site's own 404 page (dist/404.html) with a real
+# 404 status — matches the bilingual 404 pages in src/pages.
+not_found_handling = "404-page"
+# Astro builds with build.format: 'directory' (foo/index.html), so serve
+# folder pages with a trailing slash — matches public/sitemap.xml URLs.
+html_handling = "auto-trailing-slash"
