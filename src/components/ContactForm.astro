@@ -1,0 +1,74 @@
+---
+interface Props {
+  lang: 'en' | 'tr';
+}
+const { lang } = Astro.props;
+const tr = lang === 'tr';
+---
+<form class="contact-form" data-contact-form novalidate>
+  <div class="form-route" role="group" aria-labelledby="route-label">
+    <span id="route-label" class="eyebrow">{tr ? 'NE HAKKINDA KONUŞALIM?' : 'WHAT WOULD YOU LIKE TO DISCUSS?'}</span>
+    <div class="route-options">
+      <label><input type="radio" name="route" value="energy" checked /> <span>{tr ? 'Enerji ve BESS' : 'Energy & BESS'}</span></label>
+      <label><input type="radio" name="route" value="hydrology" /> <span>{tr ? 'Hidroloji ve su' : 'Hydrology & water'}</span></label>
+      <label><input type="radio" name="route" value="flood" /> <span>{tr ? 'Taşkın mühendisliği' : 'Flood engineering'}</span></label>
+      <label><input type="radio" name="route" value="partner" /> <span>{tr ? 'Mühendislik ortaklığı' : 'Engineering partnership'}</span></label>
+      <label><input type="radio" name="route" value="research" /> <span>{tr ? 'Araştırma ve yöntemler' : 'Research & methods'}</span></label>
+    </div>
+  </div>
+  <div class="form-grid">
+    <label>
+      <span>{tr ? 'Adınız' : 'Your name'}</span>
+      <input name="name" type="text" autocomplete="name" required />
+    </label>
+    <label>
+      <span>{tr ? 'Kurum' : 'Organization'}</span>
+      <input name="organization" type="text" autocomplete="organization" required />
+    </label>
+    <label>
+      <span>{tr ? 'İş e-postası' : 'Business email'}</span>
+      <input name="email" type="email" autocomplete="email" required />
+    </label>
+    <label>
+      <span>{tr ? 'Ülke / bölge' : 'Country / region'}</span>
+      <input name="region" type="text" autocomplete="country-name" />
+    </label>
+    <label class="full-field">
+      <span>{tr ? 'Kısaca projeniz' : 'Tell us briefly about the project'}</span>
+      <textarea name="message" rows="5" required></textarea>
+    </label>
+  </div>
+  <label class="consent-field">
+    <input name="consent" type="checkbox" required />
+    <span>{tr ? 'Bu talebin gizlilik bildirimine uygun şekilde işlenmesini kabul ediyorum.' : 'I agree that this inquiry may be processed according to the privacy notice.'}</span>
+  </label>
+  <input class="honeypot" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <div class="form-actions">
+    <button class="button button-dark" type="submit">{tr ? 'Talep gönder' : 'Send inquiry'} <span aria-hidden="true">↗</span></button>
+    <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+  </div>
+  <p class="form-note">{tr ? 'Gizli dosyaları, parolaları veya API anahtarlarını bu form üzerinden göndermeyin.' : 'Please do not send confidential files, passwords, or API keys through this form.'}</p>
+</form>
+<script is:inline define:vars={{ invalidMessage: tr ? 'Lütfen zorunlu alanları kontrol edin.' : 'Please check the required fields.', pendingMessage: tr ? 'İletişim altyapısı henüz yapılandırılmadı. Lütfen daha sonra tekrar deneyin.' : 'Contact delivery is not configured yet. Please try again after the business inbox is connected.', spamMessage: tr ? 'Talep alınamadı.' : 'The inquiry could not be accepted.' }}>
+  const form = document.querySelector('[data-contact-form]');
+  const status = document.querySelector('[data-form-status]');
+  if (form instanceof HTMLFormElement && status instanceof HTMLElement) {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const honeypot = form.elements.namedItem('website');
+      if (honeypot instanceof HTMLInputElement && honeypot.value.trim() !== '') {
+        status.textContent = spamMessage;
+        status.className = 'form-status error';
+        return;
+      }
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        status.textContent = invalidMessage;
+        status.className = 'form-status error';
+        return;
+      }
+      status.textContent = pendingMessage;
+      status.className = 'form-status pending';
+    });
+  }
+</script>
