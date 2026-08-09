@@ -28,7 +28,7 @@ There is **no test or lint suite** configured. Validation = `npm run check` (and
 ## Project structure
 
 ```
-astro.config.mjs        # site URL, static output, directory format
+astro.config.mjs        # site URL, static output, directory format, astro:env schema
 wrangler.toml           # Cloudflare Workers config — assets-only Worker serving dist/ (see README)
 tsconfig.json           # extends astro/tsconfigs/strict
 src/
@@ -37,11 +37,12 @@ src/
     OnePage.astro            # the entire one-page marketing layout (bilingual)
     ContactForm.astro        # bilingual inquiry form — Formspree delivery; renders an "unavailable" notice when the endpoint is unset
     TechnicalHero.astro      # custom inline SVG hero art
+  lib/contact.ts             # shared CONTACT constant (phone/address) — one-pager contact section, legal pages, BaseLayout JSON-LD
   pages/
     index.astro              # English home
     privacy.astro            # English privacy publication draft
     terms.astro              # English terms publication draft
-    404.astro                # English 404 page (emits dist/404.html; not listed in sitemap)
+    404.astro                # English 404 page (emits dist/404.html; not listed in sitemap); rewrites copy to Turkish client-side for unknown /tr/* paths
     tr/index.astro            # Turkish home
     tr/privacy.astro          # Turkish privacy publication draft
     tr/terms.astro            # Turkish terms publication draft
@@ -52,14 +53,14 @@ public/
   og.svg                     # source art for the social share image
   og.png                     # rasterized 1200x630 share image (og:image + twitter:image in BaseLayout)
   sitemap.xml                # hardcoded list of 6 public URLs — update when pages change
-.env.example                 # PUBLIC_FORMSPREE_ENDPOINT / CONTACT_RECIPIENT_EMAIL / CONTACT_FROM_EMAIL
+.env.example                 # PUBLIC_FORMSPREE_ENDPOINT / CONTACT_RECIPIENT_EMAIL / CONTACT_FROM_EMAIL (CONTACT_* informational — real recipient/from live in the Formspree dashboard)
 README.md                    # scope, commands, publication gates
 BUSINESS.md                  # audited portfolio content reference (VERIFIED / DRAFT / CONFIRM) — covers this site and the sibling product repos
 ```
 
 ## Deployment (Cloudflare Workers)
 
-The site deploys as an **assets-only Cloudflare Worker** serving `dist/` — see `wrangler.toml` (`[assets] directory = "./dist"`, `not_found_handling = "404-page"`, `html_handling = "auto-trailing-slash"`). No adapter is used: Astro static output needs none. No runtime and no secrets on the Worker; `PUBLIC_FORMSPREE_ENDPOINT` is inlined at **build time**, so it must be present in the build environment (`.env` locally, a build env var in CI or Workers Builds). The `insposoft.com` custom domain requires an **active** Cloudflare zone (nameservers delegated) in the same account. `compatibility_date` in `wrangler.toml` is pinned to the newest date the installed wrangler/workerd supports — bump it when upgrading wrangler. Workers Builds (dashboard: Worker → Settings → Builds) can auto-deploy from Git and does **not** read `[build]` from `wrangler.toml`.
+The site deploys as an **assets-only Cloudflare Worker** serving `dist/` — see `wrangler.toml` (`[assets] directory = "./dist"`, `not_found_handling = "404-page"`, `html_handling = "auto-trailing-slash"`). No adapter is used: Astro static output needs none. No runtime and no secrets on the Worker; `PUBLIC_FORMSPREE_ENDPOINT` is declared in `astro.config.mjs` (`env.schema`, read via `astro:env/client` in `ContactForm.astro`) and inlined at **build time**, so it must be present in the build environment (`.env` locally, a build env var in CI or Workers Builds). The `insposoft.com` custom domain requires an **active** Cloudflare zone (nameservers delegated) in the same account. `compatibility_date` in `wrangler.toml` is pinned to the newest date the installed wrangler/workerd supports — bump it when upgrading wrangler. Workers Builds (dashboard: Worker → Settings → Builds) can auto-deploy from Git and does **not** read `[build]` from `wrangler.toml`.
 
 ## Conventions
 
@@ -67,6 +68,7 @@ The site deploys as an **assets-only Cloudflare Worker** serving `dist/` — see
 - **Links are locale-relative** with trailing-slash directory paths (e.g. `/tr/privacy/`); the language switch toggles `/` ↔ `/tr/`.
 - **Styling lives in `global.css` only.** Use the CSS custom properties defined in `:root` (`--paper`, `--white`, `--ink`, `--ink-soft`, `--ink-faint`, `--forest`, `--blue`, `--teal`, `--rust`, `--rust-deep`, `--serif`, `--sans`, `--mono`, …). Do not add colors outside the palette. Typography: Fraunces (display headings), DM Sans (body), JetBrains Mono (eyebrows/labels/data).
 - **`BaseLayout` props:** `title`, `description`, `lang`, and optional `alternatePath` (drives hreflang alternates and x-default). Canonical URLs are built on `https://insposoft.com`.
+- **Shared contact details:** `src/lib/contact.ts` exports the `CONTACT` constant (phone + office address) — the single source of truth for the one-pager contact section, all four legal pages, and `BaseLayout`'s JSON-LD `contactPoint`. Edit it there, not per-page; the address is an operating contact, not a confirmed registered legal address (see `BUSINESS.md`).
 - **Legal pages** use the `.legal-page` class in `global.css`; the current privacy/terms text is a conservative public draft, not legal advice. Complete bracketed identity, jurisdiction, contact, legal-basis, retention, and commercial fields before final publication.
 - Preserve Turkish engineering names exactly: EPİAŞ, TEİAŞ, DSİ, MGM, Ağkolu, Kemerçayır, Almus, Taşkın Hesap, bobo.
 - Responsive breakpoints: `900px` and `560px`; support `prefers-reduced-motion` (already handled in `global.css`).

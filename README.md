@@ -6,7 +6,7 @@ Standalone Astro + TypeScript one-page marketing website for `https://insposoft.
 
 - English root page at `/`
 - Turkish counterpart at `/tr/`
-- Bilingual 404 pages at `/404/` and `/tr/404/` (emitted as `dist/404.html`; not listed in the sitemap)
+- Bilingual 404 pages at `/404/` and `/tr/404/` (emitted as `dist/404.html`; not listed in the sitemap). Unknown `/tr/*` paths also receive the root `dist/404.html`, which rewrites its copy, language switch, and document language to Turkish client-side via an inline script; the standalone `/tr/404/` page is untouched.
 - Privacy and terms routes in both locales with conservative publication drafts
 - Editorial-light visual system with a custom SVG technical composition
 - Capability narrative for energy/BESS, hydrology/water, and flood engineering
@@ -36,10 +36,12 @@ The form delivers inquiries through **Formspree** — an external form-to-email 
 - The client keeps client-side validation, its own honeypot check, privacy-consent handling, and safe generic error messages.
 - Until `PUBLIC_FORMSPREE_ENDPOINT` is set in `.env`, the page renders a bilingual “contact route not configured” notice instead of the form — set the variable locally to see the form.
 
+Public contact details — the phone number and office address shown in the one-pager's contact section and on all four legal pages — come from one shared source, `src/lib/contact.ts` (the `CONTACT` constant), which also feeds the JSON-LD `contactPoint` in `BaseLayout.astro`. The address is an operating contact and is not confirmed as a registered legal address; confirm it before final publication.
+
 Setup steps already done:
 
 1. Contact form wired to `PUBLIC_FORMSPREE_ENDPOINT` in `ContactForm.astro`.
-2. `.env` (gitignored) holds `PUBLIC_FORMSPREE_ENDPOINT`, `CONTACT_RECIPIENT_EMAIL`, `CONTACT_FROM_EMAIL`; `.env.example` documents them.
+2. `.env` (gitignored) holds `PUBLIC_FORMSPREE_ENDPOINT`, `CONTACT_RECIPIENT_EMAIL`, `CONTACT_FROM_EMAIL`; `.env.example` documents them. The two `CONTACT_*` vars are informational only — the actual recipient/from addresses are configured in the Formspree dashboard and are not read by the build.
 
 Before publishing, confirm in the Formspree dashboard: the recipient address (ismet.togay@gmail.com), sender/from address, spam settings, and that the form ID matches the deployed endpoint.
 
