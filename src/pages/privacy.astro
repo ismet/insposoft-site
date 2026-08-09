@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { CONTACT } from '../lib/contact';
 ---
 <BaseLayout lang="en" title="Privacy notice — INSPOSOFT" description="How INSPOSOFT collects and uses information submitted through its engineering inquiry form." alternatePath="/tr/privacy/">
   <main id="main" class="legal-page">
-    <a class="wordmark" href="/">INSPO<strong>SOFT</strong></a>
+    <div class="legal-top"><a class="wordmark" href="/">INSPO<strong>SOFT</strong></a><a class="language-switch" href="/tr/privacy/">TR <span aria-hidden="true">↗</span></a></div>
     <p class="eyebrow">PRIVACY · LAST UPDATED 09 AUGUST 2026</p>
     <h1>Privacy notice</h1>
     <p class="legal-lead">This notice explains how INSPOSOFT handles information submitted through this website. It is written for the public site and should be completed with the organisation’s legal identity, contact details, jurisdiction, and approved retention policy before final publication.</p>
@@ -18,7 +19,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h2>1. Who is responsible for your information?</h2>
         <p>The website is operated under the public name <strong>INSPOSOFT</strong>. The legal name and address of the data controller are to be confirmed by the site owner before this notice is treated as final.</p>
         <p><strong>Controller identity:</strong> [insert approved legal entity or individual name]</p>
-        <p><strong>Contact for privacy requests:</strong> [insert approved privacy contact address]</p>
+        <p><strong>Contact for privacy requests:</strong> {CONTACT.phoneNumber}, {CONTACT.addressLineOne}, {CONTACT.addressLineTwo}</p>
       </section>
 
       <section>

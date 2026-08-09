@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CONTACT } from '../../lib/contact';
 ---
 <BaseLayout lang="tr" title="Gizlilik bildirimi — INSPOSOFT" description="INSPOSOFT mühendislik iletişim formu üzerinden gönderilen bilgilerin nasıl işlendiğini açıklar." alternatePath="/privacy/">
   <main id="main" class="legal-page">
-    <a class="wordmark" href="/tr/">INSPO<strong>SOFT</strong></a>
+    <div class="legal-top"><a class="wordmark" href="/tr/">INSPO<strong>SOFT</strong></a><a class="language-switch" href="/privacy/">EN <span aria-hidden="true">↗</span></a></div>
     <p class="eyebrow">GİZLİLİK · SON GÜNCELLEME 09 AĞUSTOS 2026</p>
     <h1>Gizlilik bildirimi</h1>
     <p class="legal-lead">Bu bildirim, INSPOSOFT web sitesi üzerinden gönderilen bilgilerin nasıl ele alındığını açıklar. Nihai yayın öncesinde kuruluşun hukuki kimliği, iletişim bilgileri, yetkili yargı alanı ve onaylanmış saklama politikası eklenmeli ve incelenmelidir.</p>
@@ -18,7 +19,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <h2>1. Bilgilerinizden kim sorumludur?</h2>
         <p>Web sitesi <strong>INSPOSOFT</strong> adıyla işletilmektedir. Veri sorumlusunun hukuki adı ve adresi, bu bildirimin nihai kabulünden önce site sahibi tarafından doğrulanmalıdır.</p>
         <p><strong>Veri sorumlusu:</strong> [onaylanmış tüzel kişi veya gerçek kişi adını ekleyin]</p>
-        <p><strong>Gizlilik talepleri için iletişim:</strong> [onaylanmış gizlilik iletişim adresini ekleyin]</p>
+        <p><strong>Gizlilik talepleri için iletişim:</strong> {CONTACT.phoneNumber}, {CONTACT.addressLineOne}, {CONTACT.addressLineTwo}</p>
       </section>
 
       <section>

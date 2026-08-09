@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CONTACT } from '../../lib/contact';
 ---
 <BaseLayout lang="tr" title="Kullanım ve sorumluluk — INSPOSOFT" description="INSPOSOFT web sitesinin kullanımı ve mühendislik talebi gönderimi için koşullar." alternatePath="/terms/">
   <main id="main" class="legal-page">
-    <a class="wordmark" href="/tr/">INSPO<strong>SOFT</strong></a>
+    <div class="legal-top"><a class="wordmark" href="/tr/">INSPO<strong>SOFT</strong></a><a class="language-switch" href="/terms/">EN <span aria-hidden="true">↗</span></a></div>
     <p class="eyebrow">KOŞULLAR · SON GÜNCELLEME 09 AĞUSTOS 2026</p>
     <h1>Kullanım ve sorumluluk</h1>
     <p class="legal-lead">Bu koşullar, INSPOSOFT web sitesinin ve iletişim formunun temel kullanım şartlarını açıklar. Nihai yayın öncesinde onaylanmış hukuki kimlik, yargı alanı, ticari koşullar ve uyuşmazlık süreci eklenmeli ve incelenmelidir.</p>
@@ -17,7 +18,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <section>
         <h2>1. Bu koşullar hakkında</h2>
         <p>Bu web sitesine erişerek siteyi hukuka uygun şekilde ve bu koşullara göre kullanmayı kabul edersiniz. Koşulları kabul etmiyorsanız siteyi veya iletişim formunu kullanmayın.</p>
-        <p>“INSPOSOFT”, “biz” ve “bize” ifadeleri, onaylanmış hukuki bildirimde tanımlanan işletmeciyi ifade eder. Bu hukuki kimlik ve kayıtlı adres henüz doğrulanmalıdır.</p>
+        <p>“INSPOSOFT”, “biz” ve “bize” ifadeleri, onaylanmış hukuki bildirimde tanımlanan işletmeciyi ifade eder. Bu hukuki kimlik ve kayıtlı adres henüz doğrulanmalıdır. Bu bilgiler doğrulanana kadar işletmeciye {CONTACT.phoneNumber} numaralı telefondan veya {CONTACT.addressLineOne}, {CONTACT.addressLineTwo} adresinden ulaşabilirsiniz.</p>
       </section>
 
       <section>
