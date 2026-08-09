@@ -38,7 +38,7 @@
 
 | Domain | Product line | Repository status at audit | Public-facing status safe to use |
 |---|---|---|---|
-| Marketing site | **insposoft-site** (`insposoft-site`) | Standalone Astro 5 static site on `main`; bilingual EN/TR one-pager with privacy, terms, and 404 pages in both locales; Formspree-ready contact form (renders an "unavailable" notice until an endpoint is configured); all technical visuals labeled synthetic | **Site structure and copy implemented in the repository; live reachability of `https://insposoft.com` not independently verified in this audit.** |
+| Marketing site | **insposoft-site** (`insposoft-site`) | Standalone Astro 7 static site on `main`; bilingual EN/TR one-pager with privacy, terms, and 404 pages in both locales; Formspree-ready contact form (renders an "unavailable" notice until an endpoint is configured); owner-supplied public phone and office address in the contact section and privacy/terms pages (2026-08-09); all technical visuals labeled synthetic | **Site structure and copy implemented in the repository; live reachability of `https://insposoft.com` not independently verified in this audit.** |
 | Energy markets and storage | **bobo** (`bobo-api` + `bobo-ui`) | Active repositories on `main`; repository/portfolio metadata identifies UI/API hosts; UI has Cloudflare deployment configuration | **Reported live deployment configuration with a credential-gated access path.** Current reachability, public self-service registration, customer tenancy, pricing, and SLA are not independently established here. |
 | Hydrology | **Ağkolu, Kemerçayır, Almus** (`agkolu`, `iffc`, `almus-iifc`) | Three working Streamlit applications on `main`; different levels of testing and packaging | **Working site-specific forecasting applications; no public URL verified for the family in this audit.** |
 | Flood engineering | **Taşkın Hesap — Sentetik Yöntemler** (`flood-compute`) | Active repository on `main`; FastAPI + vanilla JS application, Docker path, golden and smoke tests | **Working, deployable engineering application; no public hosted URL verified.** |
@@ -87,8 +87,8 @@ The repositories do **not** establish:
 
 - Registered legal entity name
 - Corporate/marketing brand name
-- Legal address, tax information, VAT number, or company registration
-- Public email, telephone number, LinkedIn page, or official social accounts
+- Registered legal address, tax information, VAT number, or company registration (the owner-supplied office address is not confirmed as the registered legal address)
+- Public email, LinkedIn page, or official social accounts (a public telephone number and office address are **OWNER-SUPPLIED** — see §1.3)
 - Marketing website domain other than the bobo application domain
 - Corporate logo, favicon system, brand colors, typography system, or usage guidelines
 - Product pricing, packaging, billing, trial policy, or commercial terms
@@ -104,7 +104,7 @@ The repositories do **not** establish:
 | Legal/company name | **CONFIRM** | Do not invent one from repository names or author fields. |
 | Brand name | **CONFIRM** | Do not treat `insposoft`, `bataryaopt`, or `bobo` as the corporate brand without approval. |
 | Website domain | **CONFIRM** | `bataryaopt.insposoft.com` is an application domain, not automatically the company website. |
-| Public contact | **CONFIRM** | Use an approved contact only. Never copy private environment values or sample petition values. |
+| Public contact | **OWNER-SUPPLIED / CONFIRM** | Owner supplied on 2026-08-09: public phone **+90 850 305 20 64** and office address **Via Twins Plaza, No:44, Söğütözü, Çankaya/Ankara, Türkiye**; both are shown in the marketing-site contact section and the privacy/terms pages. Public email, social profiles, and the registered legal address remain CONFIRM. Never copy private environment values or sample petition values. |
 | Licensing policy | **CONFIRM** | Review each repository and dependency separately. The `ISC` field in the legacy `swh-webapi` package metadata applies only to that package metadata; it is not a portfolio-wide or necessarily source-tree-wide license. |
 | Pricing and sales model | **CONFIRM** | No billing or pricing implementation is evidenced in the current portfolio. |
 | Team experience claim | **CONFIRM** | Owner-supplied claim: the team reports approximately 20 years of engineering experience, but the repositories do not verify individual biographies, employment history, or the meaning of “20 years.” Use the softer long-term-practice narrative until names, roles, dates, and supporting project history are approved. |
@@ -637,7 +637,7 @@ Use this table to route an inquiry. It is a product-fit aid, not a sales promise
 
 ## 8. Website content plan
 
-> **Implementation status (VERIFIED, 2026-08-09):** the marketing site (`insposoft-site`, Astro 5 static) implements this plan as a single one-page layout. The home page combines company positioning, the three capability areas (bobo; Ağkolu·Kemerçayır·Almus; Taşkın Hesap) as “Engineering Systems” cards with decision/review lines, an evidence & approach section with a verification ledger, a three-step “How we work” section, technical demonstrations, the research lineage, and a contact section using the Formspree form. Privacy, terms, and 404 pages exist in both locales. The plan’s separate product pages (BESS studio, Inflow, Taşkın Hesap, Methods & evidence) remain **DRAFT**; the one-pager presents their content as sections, and the product-level CTAs from §8.2 are not implemented.
+> **Implementation status (VERIFIED, 2026-08-09):** the marketing site (`insposoft-site`, Astro 7 static) implements this plan as a single one-page layout. The home page combines company positioning, the three capability areas (bobo; Ağkolu·Kemerçayır·Almus; Taşkın Hesap) as “Engineering Systems” cards with decision/review lines, an evidence & approach section with a verification ledger, a three-step “How we work” section, technical demonstrations, the research lineage, and a contact section using the Formspree form. Privacy, terms, and 404 pages exist in both locales. The plan’s separate product pages (BESS studio, Inflow, Taşkın Hesap, Methods & evidence) remain **DRAFT**; the one-pager presents their content as sections, and the product-level CTAs from §8.2 are not implemented.
 
 ### 8.1 Recommended site structure — DRAFT
 
@@ -647,7 +647,7 @@ Use this table to route an inquiry. It is a product-fit aid, not a sales promise
 4. **Taşkın Hesap:** seven-step workflow, methods, report/KMZ outputs, golden-test methodology, demo/pilot CTA.
 5. **Research lineage:** archived reservoir and hydro-unit optimization work, clearly separated from current products.
 6. **Methods and evidence:** data sources, tests, validation cases, and limitations.
-7. **Contact:** only after the owner supplies an approved public contact and legal/company details.
+7. **Contact:** owner-supplied phone and office address (2026-08-09) plus the Formspree inquiry form; legal/company identity and an approved public email remain to be confirmed.
 
 ### 8.2 CTA registry — DRAFT
 
@@ -726,7 +726,7 @@ Do not claim SEO rankings, traffic, market demand, or search volume without sepa
 ### 11.2 Must be confirmed before launch
 
 - Legal company and brand identity.
-- Public domain, email, phone, social profiles, and address.
+- Public domain, email, and social profiles (phone and office address are owner-supplied, 2026-08-09); registered legal address remains to be confirmed.
 - Product access process and whether bobo is publicly reachable or invite-only.
 - Pricing, packaging, service/project model, and payment terms.
 - Customer references and permission to publish them.
@@ -741,7 +741,7 @@ Do not claim SEO rankings, traffic, market demand, or search volume without sepa
 
 This section is editorial metadata for maintaining the content reference. Do not copy repository paths, internal filenames, local ports, or development commands into public pages. The authoritative technical source for each claim is the relevant project’s current `AGENTS.md`, README, source, tests, and deployment configuration—not this document alone. At the audit date, the key sources are:
 
-- **Marketing site:** `insposoft-site/AGENTS.md`, `insposoft-site/README.md`, `astro.config.mjs`, `package.json`, `src/layouts/BaseLayout.astro`, `src/components/` (`OnePage.astro`, `ContactForm.astro`, `TechnicalHero.astro`), `src/pages/` and `src/pages/tr/` (`index`, `privacy`, `terms`, `404`), `src/styles/global.css`, `public/` (`og.svg`, `og.png`, `sitemap.xml`, `robots.txt`), `.env.example`.
+- **Marketing site:** `insposoft-site/AGENTS.md`, `insposoft-site/README.md`, `astro.config.mjs`, `package.json`, `src/layouts/BaseLayout.astro`, `src/components/` (`OnePage.astro`, `ContactForm.astro`, `TechnicalHero.astro`), `src/lib/contact.ts` (shared public contact values), `src/pages/` and `src/pages/tr/` (`index`, `privacy`, `terms`, `404`), `src/styles/global.css`, `public/` (`og.svg`, `og.png`, `sitemap.xml`, `robots.txt`), `wrangler.toml`, `.env.example`.
 - **Portfolio:** root `AGENTS.md`.
 - **bobo API:** `bobo-api/AGENTS.md`, `bobo-api/README.md`, `bobo-api/pyproject.toml`, `bobo-api/app/`, `bobo-api/tests/`.
 - **bobo UI:** `bobo-ui/AGENTS.md`, `bobo-ui/README.md`, `bobo-ui/package.json`, `bobo-ui/wrangler.jsonc`, `bobo-ui/src/`, `bobo-ui/worker/`.
@@ -804,7 +804,7 @@ These are target audiences, not verified customers.
 | **Contact / access** | Approved public contact, structured inquiry form, access route, privacy notice | Submit an inquiry |
 | **Legal / trust** | Privacy, terms, cookies, IP/licensing, disclaimers, security and data-processing boundary | Review terms and responsibilities |
 
-Legal/company identity and public contact remain **CONFIRM** items until the owner supplies them.
+Legal/company identity and public email/social contact remain **CONFIRM** items; public phone and office address are owner-supplied (2026-08-09).
 
 ### 13.4 Required homepage content blocks
 
