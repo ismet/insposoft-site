@@ -9,7 +9,8 @@ name = "insposoft-site"
 # Newest compatibility date supported by the pinned wrangler/workerd (see package.json).
 compatibility_date = "2026-08-08"
 
-# Production: insposoft.com as a Workers custom domain. This requires the
+# Production: insposoft.com + www.insposoft.com as Workers custom domains.
+# This requires the
 # insposoft.com DNS zone to be hosted in the same Cloudflare account
 # (Workers custom domains do not support CNAME-only zones). SSL/TLS is
 # provisioned automatically. To preview on <name>.workers.dev instead,
@@ -18,6 +19,10 @@ workers_dev = false
 
 [[routes]]
 pattern = "insposoft.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.insposoft.com"
 custom_domain = true
 
 # Static assets from the Astro build.
